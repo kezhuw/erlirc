@@ -1,0 +1,2 @@
+-define(NEWSOCKET(Socket), {newsocket, Socket}).
+-define(NEWCLIENT(Nickname, Socket), {newclient, Nickname, Socket}).
