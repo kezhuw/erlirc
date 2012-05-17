@@ -21,14 +21,23 @@ init({Creator, Maximum}) ->
 	{ok, #state{users=ets:new(?TABNAME, [set, private]),
 			hmanager=erlirc_hmanager:new(Creator, Maximum)}}.
 
-handle_call({newclient, Nickname, Socket} = Cmd, _From, #state{users=Users, hmanager=Manager} = State) ->
-	case ets:lookup(Users, Nickname) of
-		[] ->
+transfer_client(?NEWCLIENT(Nickname, Socket) = Cmd, Users, Manager) ->
+	case erlirc_hmanager:retain_handler(Manager) of
+		{ok, Handler, Manager1} ->
 			ets:insert(Users, {Nickname, placeholder}),
-			{Handler, Manager1} = erlirc_hmanager:retain_handler(Manager),
 			gen_tcp:controlling_process(Socket, Handler),
 			gen_server:cast(Handler, Cmd),
-			{reply, ok, State#state{hmanager=Manager1}};
+			{ok, Manager1};
+		{error, Reason} ->
+			gen_tcp:close(Socket),
+			{Reason, Manager}
+	end.
+
+handle_call({newclient, Nickname, _Socket} = Cmd, _From, #state{users=Users, hmanager=Manager} = State) ->
+	case ets:lookup(Users, Nickname) of
+		[] ->
+			{Result, Manager1} = transfer_client(Cmd, Users, Manager),
+			{reply, Result, State#state{hmanager=Manager1}};
 		_ ->
 			{reply, conflict, State}
 	end;
@@ -51,10 +60,15 @@ handle_call({getclient, Nickname}, _From, #state{users=Users} = State) ->
 	end.
 
 handle_cast(?NEWSOCKET(Socket) = Cmd, #state{hmanager=Manager} = State) ->
-	{Handler, Manager1} = erlirc_hmanager:retain_handler(Manager),
-	gen_tcp:controlling_process(Socket, Handler),
-	gen_server:cast(Handler, Cmd),
-	{noreply, State#state{hmanager=Manager1}}; 
+	case erlirc_hmanager:retain_handler(Manager) of
+		{ok, Handler, Manager1} ->
+			gen_tcp:controlling_process(Socket, Handler),
+			gen_server:cast(Handler, Cmd),
+			{noreply, State#state{hmanager=Manager1}};
+		{error, _Reason} ->
+			gen_tcp:close(Socket),
+			{noreply, State}
+	end;
 handle_cast({delsocket, Handler}, #state{hmanager=Manager} = State) ->
 	Manager1 = erlirc_hmanager:release_handler(Handler, Manager),
 	{noreply, State#state{hmanager=Manager1}}; 
