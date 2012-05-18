@@ -86,7 +86,7 @@ handle_cast({delclient, Nickname, Handler}, #state{users=Users, hmanager=Manager
 	{noreply, State#state{hmanager=Manager1}}.
 
 handle_info(_Info, State) ->
-	{ok, State}.
+	{noreply, State}.
 
 code_change(_Oldvsn, State, _Extra) ->
 	{ok, State}.
