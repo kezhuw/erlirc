@@ -12,11 +12,14 @@
 
 -include("erlirc_define.hrl").
 
+-define(SOCOPTS, [binary, {packet, line}, {active, once}, {keepalive, true}, {nodelay, true}]).
+
 start_link(?NEWSOCKET(_Socket) = Cmd, Server) ->
 	gen_server:start_link(?MODULE, {Cmd, Server}, []).
 
 init({?NEWSOCKET(Socket), Server}) ->
 	Dict = dict:from_list([{Socket, placeholder}]),
+	inet:setopts(Socket, ?SOCOPTS),
 	{ok, #state{clients=Dict, server=Server}}.
 
 handle_call(_Cmd, _From, State) ->
@@ -25,7 +28,7 @@ handle_call(_Cmd, _From, State) ->
 handle_cast(?NEWSOCKET(Socket), #state{clients=Clients} = State) ->
 	Clients1 = dict:store(Socket, placeholder, Clients),
 	%% TODO application level keepalive
-	inet:setopts(Socket, [{active, once}, {keepalive, true}, {nodelay, true}]),
+	inet:setopts(Socket, ?SOCOPTS),
 	{noreply, State#state{clients=Clients1}}.
 
 handle_info({tcp_closed, Socket}, State = #state{clients = Clients, server = Server}) ->
