@@ -2,3 +2,7 @@
 
 *.swo
 *.swp
+*.vim
+
+*.bak
+*.old
