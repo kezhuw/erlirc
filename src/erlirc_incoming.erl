@@ -25,6 +25,7 @@ idle(timeout, Socket) ->
 
 handle_info({tcp, Socket, Packet}, ready, Socket) ->
     io:format("Recv: ~p~n", [Packet]),
+    inet:setopts(Socket, [{active, once}]),
     {next_state, ready, Socket};
 handle_info({tcp_error, Socket, _Why} = Reason, _StateName, Socket) ->
     {stop, {shutdown, Reason}, Socket};
