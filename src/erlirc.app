@@ -3,7 +3,7 @@
   {vsn, "0.0.0"},
   {modules, [erlirc_app, erlirc_sup,
              erlirc_listener_sup, erlirc_listener, erlirc_acceptor,
-	     erlirc_server
+	     erlirc_incoming_sup, erlirc_incoming
 	    ]},
   {applications, [kernel, stdlib]},
   {env, [
