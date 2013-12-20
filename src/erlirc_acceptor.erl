@@ -7,5 +7,5 @@ start_link(Listener) ->
 
 loop(Listener) ->
     {ok, Socket} = gen_tcp:accept(Listener),
-    erlirc_incoming_sup:new(Socket),
+    erlirc_connection_sup:new(Socket),
     ?MODULE:loop(Listener).

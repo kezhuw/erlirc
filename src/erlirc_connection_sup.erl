@@ -1,4 +1,4 @@
--module(erlirc_incoming_sup).
+-module(erlirc_connection_sup).
 -export([start_link/0, new/1]).
 
 -behaviour(supervisor).
@@ -12,11 +12,11 @@ start_link() ->
 init(_) ->
     {ok, {{simple_one_for_one, 30, 3600},
           [{connection,
-            {erlirc_incoming, start_link, []},
+            {erlirc_connection, start_link, []},
             temporary,
             1200,
             worker,
-            [erlirc_incoming]}]}}.
+            [erlirc_connection]}]}}.
 
 new(Socket) ->
     {ok, Pid} = supervisor:start_child(?SELF, [Socket]),

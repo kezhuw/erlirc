@@ -6,8 +6,8 @@ erlirc_sup.erl                      \
 erlirc_acceptor.erl                 \
 erlirc_listener.erl                 \
 erlirc_listener_sup.erl             \
-erlirc_incoming.erl                 \
-erlirc_incoming_sup.erl             \
+erlirc_connection.erl               \
+erlirc_connection_sup.erl           \
 
 SRCS += $(addprefix src/, $(strip $(ERLS)))
 

@@ -11,10 +11,10 @@ init(Args) ->
     {_, Ports} = proplists:lookup(ports, Args),
     {_, NAcceptor} = proplists:lookup(nacceptor, Args),
     Specs = [
-        {erlirc_incoming_sup,
-            {erlirc_incoming_sup, start_link, []},
+        {erlirc_connection_sup,
+            {erlirc_connection_sup, start_link, []},
             permanent, infinity, supervisor,
-            [erlirc_incoming_sup]},
+            [erlirc_connection_sup]},
         {erlirc_listener_sup,
             {erlirc_listener_sup, start_link, [Ports, NAcceptor]},
             permanent, infinity, supervisor,

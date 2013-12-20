@@ -1,4 +1,4 @@
--module(erlirc_incoming).
+-module(erlirc_connection).
 -export([start_link/1]).
 
 -behaviour(gen_fsm).
