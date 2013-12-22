@@ -7,6 +7,7 @@
 	    ]},
   {applications, [kernel, stdlib]},
   {env, [
+         {server, "erlirc.example.com"},
          {ports, [6667]},
 	 {nacceptor, 20}
 	]},

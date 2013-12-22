@@ -8,7 +8,7 @@ start_link(Port, NAcceptor) ->
     supervisor:start_link(?MODULE, [Port, NAcceptor]).
 
 init([Port, NAcceptor]) ->
-    {ok, Listener} = gen_tcp:listen(Port, [{active, false}]),
+    {ok, Listener} = gen_tcp:listen(Port, [{active, false}, {reuseaddr, true}, binary]),
     Acceptors = [acceptor_spec(Listener, Port, I)
         || I <- lists:seq(1, NAcceptor)],
     {ok, {{one_for_one, 30, 3600}, Acceptors}}.

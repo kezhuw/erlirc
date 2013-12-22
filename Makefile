@@ -8,6 +8,9 @@ erlirc_listener.erl                 \
 erlirc_listener_sup.erl             \
 erlirc_connection.erl               \
 erlirc_connection_sup.erl           \
+erlirc_user.erl						\
+erlirc_user_sup.erl					\
+erlirc_message.erl					\
 
 SRCS += $(addprefix src/, $(strip $(ERLS)))
 
